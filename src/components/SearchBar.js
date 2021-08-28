@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 45,
     width: 333,
-    marginVertical: 20,
+    marginTop: 20,
     paddingHorizontal: 10,
     flexDirection: "row",
   },
