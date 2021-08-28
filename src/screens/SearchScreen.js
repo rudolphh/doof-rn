@@ -1,29 +1,17 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import SearchBar from "../components/SearchBar";
-import RestaurantList from "../components/RestaurantList";
-import yelp from "../api/yelp";
+import RestaurantList from "../components/RestaurantsList";
+import useRestaurants from "../hooks/useRestaurants";
 
 const SearchScreen = () => {
   const [searchText, setSearchText] = useState("");
-  const [results, setResults] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [searchApi, restaurants, errorMessage] = useRestaurants();
 
-  const searchApi = async (searchTerm) => {
-    try {
-      const response = await yelp.get("/search", {
-        params: {
-          limit: 50,
-          term: searchTerm,
-          location: "modesto",
-        },
-      });
-      console.log(response.data);
-      setResults(response.data.businesses);
-    } catch (e) {
-      setResults([]);
-      setErrorMessage("Try again later");
-    }
+  const filterRestaurantsByPrice = (price) => {
+    return restaurants.filter(
+        (restaurant) => restaurant.price && (restaurant.price === price)
+      );
   };
 
   return (
@@ -33,10 +21,41 @@ const SearchScreen = () => {
         onChangeSearchText={setSearchText}
         onSearchSubmit={() => searchApi(searchText)}
       />
-      <View style={styles.errorView}>
+
+      {errorMessage.length > 0 ? (
         <Text style={styles.errorText}>{errorMessage}</Text>
-      </View>
-      <RestaurantList />
+      ) : null}
+      <View style={{ marginVertical: 3 }}></View>
+      {errorMessage.length === 0 ? (
+        <>
+          <RestaurantList
+            title="Cost Effective"
+            restaurants={filterRestaurantsByPrice('$')}
+          />
+          <View
+            style={{
+              borderBottomColor: "lightgray",
+              borderBottomWidth: 1,
+              width: "100%"
+            }}
+          />
+          <RestaurantList
+            title="Bit Pricier"
+            restaurants={filterRestaurantsByPrice("$$")}
+          />
+          <View
+            style={{
+              borderBottomColor: "lightgray",
+              borderBottomWidth: 1,
+              width: "100%"
+            }}
+          />
+          <RestaurantList
+            title="Big Spender"
+            restaurants={filterRestaurantsByPrice('$$$')}
+          />
+        </>
+      ) : null}
     </View>
   );
 };
@@ -47,11 +66,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 30,
+    paddingLeft: 25,
+    alignItems: 'flex-start'
   },
-  errorView: {
-    marginVertical: 5,
+  errorText: {
+    marginTop: 3,
   },
-  errorText: {},
 });
