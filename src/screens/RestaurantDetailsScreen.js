@@ -26,6 +26,7 @@ const RestaurantDetailsScreen = ({ navigation }) => {
       <FlatList
         numColumns={1}
         data={restaurant.photos}
+        keyExtractor={(item) => item}
         renderItem={({ item }) => {
           return <Image style={styles.image} source={{ uri: item }} />;
         }}
