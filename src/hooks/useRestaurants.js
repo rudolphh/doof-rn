@@ -28,3 +28,4 @@ export default () => {
 
   return [searchApi, restaurants, errorMessage];
 };
+
